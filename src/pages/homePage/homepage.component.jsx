@@ -7,16 +7,20 @@ class HomePage extends React.Component{
   state = {
     queriedData:[]
   }
+  unsubscribeFromBase = null;
   componentDidMount(){
-      const getData = async (collection) =>{
-      const userRef = firestore.collection(collection);
-      const snapShot = await userRef.get();
-      const fiecareSnap = await snapShot.docs.map(doc => doc.data())
-      this.setState({
-        queriedData: fiecareSnap
+      const userRef = firestore.collection('infoteca');
+      this.unsubscribeFromBase = userRef.onSnapshot(doc =>{
+       const dataForState = doc.docs.map(doc => doc.data())
+       this.setState({
+        queriedData: dataForState
+       })
+        console.log(dataForState)
       })
-  }
-  getData('infoteca')
+
+}
+componentWillUnmount(){
+  this.unsubscribeFromBase()
 }
   render(){
     const {queriedData} = this.state;
